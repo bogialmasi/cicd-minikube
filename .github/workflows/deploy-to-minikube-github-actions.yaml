@@ -11,8 +11,8 @@ jobs:
     - name: Start minikube
       uses: medyagh/setup-minikube@master
       with:
-          driver: docker
-          container-runtime: docker
+        driver: docker
+        container-runtime: docker
     - name: Try the cluster !
       run: kubectl get pods -A
     - name: Build image
@@ -25,6 +25,15 @@ jobs:
     - name: Deploy to minikube
       run:
         kubectl apply -f k8s-node-app.yaml
+    - name: Debug deployment
+      if: always()
+      run: |
+        kubectl get deployments -o wide
+        kubectl get pods -o wide
+        kubectl get services
+        kubectl describe deployment nodejs-app
+        kubectl describe pods
+        kubectl get events --sort-by=.metadata.creationTimestamp
     - name: Test service URLs
       run: |
           minikube service list
